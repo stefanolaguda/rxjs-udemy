@@ -1,10 +1,12 @@
-import { Observable } from 'rxjs';
+import { Observable } from "rxjs";
 
-const someObservable$ = new Observable<string>(subscriber => {
-  subscriber.next('Alice');
-  subscriber.next('Ben');
-  subscriber.next('Charlie');
-  subscriber.complete();
+const testObservable = new Observable((subscriber) => {
+    subscriber.next("Riccardo");
+    subscriber.next("Panelli");
 });
 
-someObservable$.subscribe(value => console.log(value));
+const observer = {
+    next: (data: any) => console.log(data),
+};
+
+testObservable.subscribe(observer); // Subscription
