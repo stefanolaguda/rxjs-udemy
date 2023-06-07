@@ -1,12 +1,11 @@
 import { Observable } from "rxjs";
 
-const testObservable = new Observable((subscriber) => {
-    subscriber.next("Riccardo");
-    subscriber.next("Panelli");
+const Observable$ = new Observable<string>((subscriber) => {
+    subscriber.next("Stefano");
+    setTimeout(() => subscriber.next("Laguda"), 3000);
+    setTimeout(() => subscriber.next("Steppy"), 5000);
 });
 
-const observer = {
-    next: (data: any) => console.log(data),
-};
+const testUnsuscribe = Observable$.subscribe((result) => console.log(result));
 
-testObservable.subscribe(observer); // Subscription
+setTimeout(() => testUnsuscribe.unsubscribe(),4000);
