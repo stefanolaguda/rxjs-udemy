@@ -1,26 +1,14 @@
 import { Observable } from "rxjs";
 
-const Observable$ = new Observable<string>((subscriber) => {
-    console.log("Observable executed");
-    subscriber.next("ciao");
-    subscriber.next("Stefano");
-    subscriber.error(new Error("Failure observable"));
-    setTimeout(() => {
-        subscriber.next("Laguda");
-    }, 2000);
+let btn = document.querySelector("#btn");
 
-    // TEARDOWN
-    return () => {
-        console.log("Teardown");
-    };
+let btnMouseEvent = new Observable<MouseEvent>((subscriber) => {
+    btn.addEventListener("click", (event: MouseEvent) => {
+        subscriber.next(event);
+    });
 });
 
-console.log("Before subscribe");
-
-Observable$.subscribe({
-    next: (value) => console.log(value),
+btnMouseEvent.subscribe({
+    next: (data) => console.log(data.x),
     error: (err) => console.log(err),
-    complete: () => console.log("Observable Completed"),
 });
-
-console.log("After subscribe");
