@@ -1,28 +1,30 @@
-import { forkJoin } from "rxjs";
-import { ajax } from "rxjs/ajax";
+import { combineLatest, fromEvent } from "rxjs";
 
-let randomCoffeeAjax = ajax<any>(
-    "https://random-data-api.com/api/coffee/random_coffee"
-);
+const temperatureInput = document.querySelector("#temperature-input");
+const conversionDropdown = document.querySelector("#conversion-dropdown");
+const resultText = document.querySelector("#result-text");
 
-let randomDessertAjax = ajax<any>(
-    "https://random-data-api.com/api/dessert/random_dessert"
-);
+const temperatureInputEvent$ = fromEvent<any>(temperatureInput, "input");
+const conversionInputEvent$ = fromEvent<any>(conversionDropdown, "input");
 
-let randomFoodAjax = ajax<any>(
-    "https://random-data-api.com/api/food/random_food"
-);
+combineLatest([temperatureInputEvent$, conversionInputEvent$]).subscribe({
+    next: ([temperatureEvent, conversionEvent]) => {
+        console.log(typeof temperatureEvent);
 
-forkJoin([randomFoodAjax, randomDessertAjax, randomCoffeeAjax]).subscribe({
-    next: ([randomFood, randomDessert, randomCoffee]) => {
-        console.log(randomFood);
-        console.log(randomDessert);
-        console.log(randomCoffee);
+        console.log(temperatureEvent.target["value"]);
+        console.log(conversionEvent.target["value"]);
 
-        console.log(
-            `cibo: ${randomFood.response.dish},\ndessert: ${randomDessert.response.variety},\ncaffè: ${randomCoffee.response.blend_name}`
-        );
+        const temperature = Number(temperatureEvent.target["value"]);
+        const conversion = conversionEvent.target["value"];
+
+        let result: number;
+        if (conversion === "f-to-c") {
+            result = ((temperature - 32) * 5) / 9;
+        } else if (conversion === "c-to-f") {
+            result = (temperature * 9) / 5 + 32;
+        }
+
+        resultText.innerHTML = String(result);
     },
     error: (error) => console.log(error),
-    complete: () => console.log("completed"),
 });
