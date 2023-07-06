@@ -1,30 +1,30 @@
-import { combineLatest, fromEvent } from "rxjs";
+// FILTER()
 
-const temperatureInput = document.querySelector("#temperature-input");
-const conversionDropdown = document.querySelector("#conversion-dropdown");
-const resultText = document.querySelector("#result-text");
+import { Observable, filter } from "rxjs"
 
-const temperatureInputEvent$ = fromEvent<any>(temperatureInput, "input");
-const conversionInputEvent$ = fromEvent<any>(conversionDropdown, "input");
+interface NewsItem {
+    category: "sports" | "report",
+    content: string
+};
 
-combineLatest([temperatureInputEvent$, conversionInputEvent$]).subscribe({
-    next: ([temperatureEvent, conversionEvent]) => {
-        console.log(typeof temperatureEvent);
+const observableNews$ = new Observable<NewsItem>((subscriber) => {
+    setTimeout(() => subscriber.next({ category: "sports", content: "A" }), 2000);
 
-        console.log(temperatureEvent.target["value"]);
-        console.log(conversionEvent.target["value"]);
+    setTimeout(() => subscriber.next({ category: "report", content: "B" }), 4000);
 
-        const temperature = Number(temperatureEvent.target["value"]);
-        const conversion = conversionEvent.target["value"];
+    setTimeout(() => subscriber.next({ category: "sports", content: "C" }), 6000);
 
-        let result: number;
-        if (conversion === "f-to-c") {
-            result = ((temperature - 32) * 5) / 9;
-        } else if (conversion === "c-to-f") {
-            result = (temperature * 9) / 5 + 32;
-        }
-
-        resultText.innerHTML = String(result);
-    },
-    error: (error) => console.log(error),
+    setTimeout(() => subscriber.next({ category: "report", content: "D" }), 8000);
 });
+
+// observableNews$.subscribe({
+//     next: (data) => console.log(data),
+//     error: (error) => console.log(error)
+// });
+
+observableNews$.pipe(
+    filter((value) => value.category === "sports")
+).subscribe({
+    next: (data) => console.log(data),
+    error: (error) => console.log(error)
+})
